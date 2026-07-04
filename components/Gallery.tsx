@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
 import { wedding } from "@/lib/wedding-config";
 import { Section } from "./ui/Section";
+import { Photo } from "./ui/Photo";
 import { revealChild } from "./ui/Reveal";
 
 /**
@@ -12,7 +12,7 @@ import { revealChild } from "./ui/Reveal";
  * keyboard-navigable lightbox. Tiles reveal with a stagger on scroll.
  */
 export function Gallery() {
-  const images = wedding.gallery;
+  const { eyebrow, title, images } = wedding.gallery;
   const [active, setActive] = useState<number | null>(null);
 
   const close = useCallback(() => setActive(null), []);
@@ -49,7 +49,7 @@ export function Gallery() {
         : "aspect-square";
 
   return (
-    <Section id="gallery" eyebrow="Moments" title="A Few Favourites">
+    <Section id="gallery" eyebrow={eyebrow} title={title}>
       <motion.ul
         initial="hidden"
         whileInView="visible"
@@ -67,9 +67,9 @@ export function Gallery() {
               type="button"
               onClick={() => setActive(i)}
               className="absolute inset-0 h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-champagne/60"
-              aria-label={`Open image: ${img.alt}`}
+              aria-label={`Ouvrir l'image : ${img.alt}`}
             >
-              <Image
+              <Photo
                 src={img.src}
                 alt={img.alt}
                 fill
@@ -96,12 +96,12 @@ export function Gallery() {
             onClick={close}
             role="dialog"
             aria-modal="true"
-            aria-label="Image viewer"
+            aria-label="Visionneuse d'images"
           >
             <button
               type="button"
               onClick={close}
-              aria-label="Close"
+              aria-label="Fermer"
               className="absolute right-5 top-5 rounded-full border border-line p-2 text-mist transition-colors hover:border-champagne/60 hover:text-champagne"
             >
               <CloseIcon />
@@ -118,13 +118,13 @@ export function Gallery() {
               className="relative h-[72vh] w-[92vw] max-w-4xl"
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
             >
-              <Image
+              <Photo
                 src={images[active].src}
                 alt={images[active].alt}
                 fill
                 sizes="92vw"
                 className="rounded-2xl object-contain"
-                priority
+                preload
               />
             </motion.div>
 
@@ -148,7 +148,7 @@ function NavButton({ side, onClick }: { side: "left" | "right"; onClick: () => v
         e.stopPropagation();
         onClick();
       }}
-      aria-label={side === "left" ? "Previous image" : "Next image"}
+      aria-label={side === "left" ? "Image précédente" : "Image suivante"}
       className={`absolute top-1/2 -translate-y-1/2 rounded-full border border-line p-3 text-mist transition-colors hover:border-champagne/60 hover:text-champagne ${
         side === "left" ? "left-3 sm:left-6" : "right-3 sm:right-6"
       }`}

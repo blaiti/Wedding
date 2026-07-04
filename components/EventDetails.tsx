@@ -7,19 +7,19 @@ import { MagneticButton } from "./ui/MagneticButton";
 
 /** A single ceremony/reception card. */
 function EventCard({
-  kicker,
   venue,
+  directionsLabel,
   delay,
 }: {
-  kicker: string;
   venue: Venue;
+  directionsLabel: string;
   delay: number;
 }) {
   return (
     <Reveal delay={delay} className="h-full">
       <article className="glass flex h-full flex-col items-center rounded-3xl p-8 text-center sm:p-10">
         <span className="font-display text-xs uppercase tracking-[0.4em] text-champagne-dim">
-          {kicker}
+          {venue.kicker}
         </span>
 
         <div className="my-6 flex items-center gap-3">
@@ -47,7 +47,7 @@ function EventCard({
             rel="noopener noreferrer"
             variant="ghost"
           >
-            Get Directions
+            {directionsLabel}
             <ArrowIcon />
           </MagneticButton>
         </div>
@@ -57,12 +57,12 @@ function EventCard({
 }
 
 export function EventDetails() {
-  const { ceremony, reception } = wedding.events;
+  const { eyebrow, title, directionsLabel, ceremony, reception } = wedding.events;
   return (
-    <Section id="details" eyebrow="The Details" title="Where & When">
+    <Section id="details" eyebrow={eyebrow} title={title}>
       <div className="mx-auto grid max-w-4xl gap-6 sm:gap-8 md:grid-cols-2">
-        <EventCard kicker="The Ceremony" venue={ceremony} delay={0} />
-        <EventCard kicker="The Reception" venue={reception} delay={0.1} />
+        <EventCard venue={ceremony} directionsLabel={directionsLabel} delay={0} />
+        <EventCard venue={reception} directionsLabel={directionsLabel} delay={0.1} />
       </div>
     </Section>
   );

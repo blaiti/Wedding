@@ -18,14 +18,16 @@ const inter = Inter({
 });
 
 const title = `${wedding.couple.one} ${wedding.couple.joiner} ${wedding.couple.two} — ${wedding.dateDisplay}`;
+const joinLine = `Rejoignez-nous à ${wedding.location} le ${wedding.dateDisplay}.`;
 
 export const metadata: Metadata = {
   title,
-  description: `${wedding.tagline} Join us in ${wedding.location} on ${wedding.dateDisplay}.`,
+  description: `${wedding.tagline} ${joinLine}`,
   openGraph: {
     title,
-    description: `Join us in ${wedding.location} on ${wedding.dateDisplay}.`,
+    description: joinLine,
     type: "website",
+    locale: "fr_FR",
   },
 };
 
@@ -41,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="fr"
       className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
     >
       {/* .grain paints a fixed, blend-mode film-grain overlay over everything */}

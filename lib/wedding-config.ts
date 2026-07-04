@@ -1,88 +1,160 @@
 /**
  * ─────────────────────────────────────────────────────────────────────────
- *  WEDDING CONTENT — single source of truth
+ *  CONTENU DU MARIAGE — source unique de vérité
  * ─────────────────────────────────────────────────────────────────────────
- *  Edit everything about the couple, date, venues, story and gallery here.
- *  All values below are PLACEHOLDERS — swap them for the real details.
- *  See the "What to replace" checklist in the README after building.
+ *  Modifiez ici tout ce qui concerne le couple, la date, les lieux, l'histoire
+ *  et la galerie. Toutes les valeurs ci-dessous sont des EXEMPLES — remplacez-les
+ *  par les vraies informations.
+ *
+ *  Typographie française : on utilise les guillemets « … » et une espace
+ *  insécable ( ) avant ; : ! ? et à l'intérieur des guillemets. Les photos
+ *  pointent vers des fichiers locaux dans /public/photos ; si un fichier manque,
+ *  un dégradé doux s'affiche à sa place pour ne jamais casser la mise en page.
  * ─────────────────────────────────────────────────────────────────────────
  */
 
+export interface Photo {
+  /** Chemin de l'image depuis /public, ex. "/photos/hero.jpg" */
+  src: string;
+  /** Texte alternatif (accessibilité) */
+  alt: string;
+}
+
 export interface Venue {
-  /** Display name of the venue, e.g. "The Glasshouse" */
+  /** Petit intitulé au-dessus de la carte, ex. « La cérémonie » */
+  kicker: string;
+  /** Nom du lieu, ex. « The Glasshouse Pavilion » */
   name: string;
-  /** Full street address shown on the card */
+  /** Adresse complète affichée sur la carte */
   address: string;
-  /** Human-readable time, e.g. "4:00 PM" */
+  /** Heure lisible, ex. « 16 h 00 » (avec espaces insécables) */
   time: string;
   /**
-   * Query used to build the Google Maps directions link.
-   * Use the venue name + address, or a plus-code / lat,lng.
+   * Requête servant à construire le lien d'itinéraire Google Maps.
+   * Utilisez le nom + l'adresse du lieu, ou un plus-code / lat,lng.
    */
   mapQuery: string;
 }
 
 export interface StoryChapter {
-  /** Small eyebrow label, e.g. a year or a place */
+  /** Petit intitulé, ex. une année et un lieu */
   eyebrow: string;
-  /** Chapter heading */
+  /** Titre du chapitre */
   title: string;
-  /** One short paragraph */
+  /** Un court paragraphe */
   body: string;
-  /** Optional image path (from /public). Omit for a text-only chapter. */
-  image?: string;
-  /** Alt text for the image */
-  imageAlt?: string;
+  /** Photo optionnelle. Omettez-la pour un chapitre sans image. */
+  photo?: Photo;
 }
 
-export interface GalleryImage {
-  src: string;
-  alt: string;
-  /** "tall" spans two rows in the masonry grid; "wide" spans two columns. */
+export interface GalleryImage extends Photo {
+  /** « tall » occupe deux rangées ; « wide » occupe deux colonnes. */
   span?: "tall" | "wide";
 }
 
 export interface WeddingConfig {
   couple: {
-    /** First partner's display name */
+    /** Prénom du premier partenaire */
     one: string;
-    /** Second partner's display name */
+    /** Prénom du second partenaire */
     two: string;
-    /** How the two names are joined in the hero, e.g. "&" or "and" */
+    /** Symbole qui relie les deux prénoms, ex. « & » */
     joiner: string;
   };
-  /** ISO 8601 date-time of the ceremony start, with timezone offset. */
+  /** Date-heure ISO 8601 du début de la cérémonie, avec fuseau horaire. */
   dateISO: string;
-  /** Pre-formatted date string for display (kept separate so you control it). */
+  /** Date pré-formatée pour l'affichage (séparée pour la garder sous contrôle). */
   dateDisplay: string;
-  /** City / region line under the date */
+  /** Ville / région, affichée sous la date */
   location: string;
-  /** One-line hero tagline */
+  /** Phrase d'accroche du hero */
   tagline: string;
 
+  hero: {
+    /** Surtitre au-dessus des prénoms */
+    surtitle: string;
+    /** Bouton d'ouverture (visible sur mobile) */
+    openLabel: string;
+    /** Indice de défilement sous le hero */
+    scrollHint: string;
+    /** Libellé accessible du repère de défilement */
+    scrollAriaLabel: string;
+    /** Photo de fond du hero */
+    photo: Photo;
+  };
+
+  countdown: {
+    eyebrow: string;
+    title: string;
+    labels: { days: string; hours: string; minutes: string; seconds: string };
+    /** Petit texte sous le compte à rebours */
+    subtext: string;
+    /** Message affiché le jour J */
+    todayMessage: string;
+  };
+
   story: {
+    eyebrow: string;
+    title: string;
     intro: string;
     chapters: StoryChapter[];
   };
 
   events: {
+    eyebrow: string;
+    title: string;
+    /** Libellé du lien d'itinéraire (une flèche est ajoutée après) */
+    directionsLabel: string;
     ceremony: Venue;
     reception: Venue;
   };
 
-  gallery: GalleryImage[];
+  gallery: {
+    eyebrow: string;
+    title: string;
+    images: GalleryImage[];
+  };
 
   rsvp: {
-    /** Deadline copy shown near the form */
+    eyebrow: string;
+    title: string;
+    /** Texte de l'échéance affiché près du formulaire */
     deadline: string;
-    /** Max guests a single RSVP can bring (used by the number input) */
+    /** Nombre max d'invités par réponse (utilisé par le champ nombre) */
     maxGuests: number;
+    fields: {
+      name: { label: string; placeholder: string };
+      email: { label: string; placeholder: string };
+      attending: { label: string };
+      guests: { label: string };
+      dietary: { label: string; placeholder: string };
+      message: { label: string; placeholder: string };
+    };
+    /** Libellés des deux boutons de présence */
+    attendChoices: { yes: string; no: string };
+    /** Libellés du bouton d'envoi */
+    submit: { idle: string; submitting: string };
+    /** Messages d'erreur ({max} est remplacé par le nombre max d'invités) */
+    errors: {
+      name: string;
+      emailRequired: string;
+      emailInvalid: string;
+      attending: string;
+      guests: string;
+      submit: string;
+    };
+    /** Écran de confirmation ({name} est remplacé par le prénom) */
+    success: {
+      heading: string;
+      yes: string;
+      no: string;
+    };
   };
 
   footer: {
-    /** Warm closing line */
+    /** Ligne de clôture chaleureuse */
     message: string;
-    /** Small credit line */
+    /** Petite ligne de crédit */
     credit: string;
   };
 }
@@ -94,74 +166,156 @@ export const wedding: WeddingConfig = {
     joiner: "&",
   },
 
-  // Ceremony starts 2026-09-19, 16:00, UTC+01:00. Change to your real date/tz.
+  // Cérémonie le 2026-09-19 à 16 h 00, UTC+01:00. Adaptez à votre date / fuseau.
   dateISO: "2026-09-19T16:00:00+01:00",
-  dateDisplay: "September 19, 2026",
-  location: "Lisbon, Portugal",
-  tagline: "Two orbits, one gravity — join us as we begin.",
+  dateDisplay: "19 septembre 2026",
+  location: "Lisbonne, Portugal",
+  tagline: "Deux cœurs, une même histoire — venez l'écrire avec nous.",
+
+  hero: {
+    surtitle: "Nous nous marions",
+    openLabel: "Ouvrir l'invitation",
+    scrollHint: "Faites défiler",
+    scrollAriaLabel: "Défiler vers le compte à rebours",
+    photo: {
+      src: "/photos/hero.jpg",
+      alt: "Aria et Kai, main dans la main au coucher du soleil",
+    },
+  },
+
+  countdown: {
+    eyebrow: "Compte à rebours",
+    title: "Le grand jour approche",
+    labels: {
+      days: "Jours",
+      hours: "Heures",
+      minutes: "Minutes",
+      seconds: "Secondes",
+    },
+    subtext: "avant notre « oui » à Lisbonne",
+    todayMessage: "C'est aujourd'hui !",
+  },
 
   story: {
+    eyebrow: "Notre histoire",
+    title: "Comment tout a commencé",
     intro:
-      "Every constellation starts with two points of light. Here is the short version of how ours found each other.",
+      "Chaque histoire d'amour commence par une première étincelle. Voici, en quelques mots, comment la nôtre a pris feu.",
     chapters: [
       {
-        eyebrow: "2019 · The Meet",
-        title: "A Chance Alignment",
-        body: "We were seated next to each other at a friend's dinner neither of us wanted to attend. We stayed until the restaurant turned the lights off.",
-        image: "/images/story-1.svg",
-        imageAlt: "Placeholder photo of the couple, first chapter",
+        eyebrow: "2019 · La rencontre",
+        title: "Un heureux hasard",
+        body: "Placés côte à côte lors d'un dîner entre amis où aucun de nous ne voulait aller. Nous sommes restés jusqu'à ce que le restaurant éteigne ses lumières.",
+        photo: {
+          src: "/photos/story-1.jpg",
+          alt: "Aria et Kai, la rencontre",
+        },
       },
       {
-        eyebrow: "2022 · The Journey",
-        title: "Building an Orbit",
-        body: "Three cities, one very patient houseplant, and a thousand small mornings later, we realised we were already home wherever the other one was.",
-        image: "/images/story-2.svg",
-        imageAlt: "Placeholder photo of the couple, second chapter",
+        eyebrow: "2022 · Le chemin",
+        title: "Construire à deux",
+        body: "Trois villes, une plante verte très patiente et mille petits matins plus tard, nous avons compris que nous étions déjà chez nous, l'un auprès de l'autre.",
+        photo: {
+          src: "/photos/story-2.jpg",
+          alt: "Aria et Kai, le chemin parcouru ensemble",
+        },
       },
       {
-        eyebrow: "2025 · The Question",
-        title: "A Fixed Point",
-        body: "On a quiet rooftop under an unremarkable sky, one of us asked the only question that ever really mattered. The answer was never in doubt.",
+        eyebrow: "2026 · La promesse",
+        title: "Pour toujours",
+        body: "Sur un toit paisible, sous un ciel tout simple, l'un de nous a posé la seule question qui comptait vraiment. La réponse n'a jamais fait de doute.",
+        photo: {
+          src: "/photos/story-3.jpg",
+          alt: "Aria et Kai, la promesse",
+        },
       },
     ],
   },
 
   events: {
+    eyebrow: "Les détails",
+    title: "Où & Quand",
+    directionsLabel: "Voir l'itinéraire",
     ceremony: {
+      kicker: "La cérémonie",
       name: "The Glasshouse Pavilion",
-      address: "Rua das Estrelas 12, 1200-001 Lisbon",
-      time: "4:00 PM",
+      address: "Rua das Estrelas 12, 1200-001 Lisbonne",
+      time: "16 h 00",
       mapQuery: "The Glasshouse Pavilion, Rua das Estrelas 12, Lisbon",
     },
     reception: {
+      kicker: "La réception",
       name: "Aurora Rooftop",
-      address: "Avenida do Horizonte 88, 1250-002 Lisbon",
-      time: "7:00 PM",
+      address: "Avenida do Horizonte 88, 1250-002 Lisbonne",
+      time: "19 h 00",
       mapQuery: "Aurora Rooftop, Avenida do Horizonte 88, Lisbon",
     },
   },
 
-  gallery: [
-    { src: "/images/gallery-1.svg", alt: "Placeholder gallery photo 1", span: "tall" },
-    { src: "/images/gallery-2.svg", alt: "Placeholder gallery photo 2" },
-    { src: "/images/gallery-3.svg", alt: "Placeholder gallery photo 3" },
-    { src: "/images/gallery-4.svg", alt: "Placeholder gallery photo 4", span: "wide" },
-    { src: "/images/gallery-5.svg", alt: "Placeholder gallery photo 5" },
-    { src: "/images/gallery-6.svg", alt: "Placeholder gallery photo 6", span: "tall" },
-  ],
+  gallery: {
+    eyebrow: "Moments",
+    title: "Quelques souvenirs",
+    images: [
+      { src: "/photos/gallery-1.jpg", alt: "Souvenir du mariage 1", span: "tall" },
+      { src: "/photos/gallery-2.jpg", alt: "Souvenir du mariage 2" },
+      { src: "/photos/gallery-3.jpg", alt: "Souvenir du mariage 3" },
+      { src: "/photos/gallery-4.jpg", alt: "Souvenir du mariage 4", span: "wide" },
+      { src: "/photos/gallery-5.jpg", alt: "Souvenir du mariage 5" },
+      { src: "/photos/gallery-6.jpg", alt: "Souvenir du mariage 6", span: "tall" },
+      { src: "/photos/gallery-7.jpg", alt: "Souvenir du mariage 7" },
+      { src: "/photos/gallery-8.jpg", alt: "Souvenir du mariage 8", span: "wide" },
+    ],
+  },
 
   rsvp: {
-    deadline: "Kindly respond by August 15, 2026",
+    eyebrow: "RSVP",
+    title: "Serez-vous des nôtres ?",
+    deadline: "Merci de répondre avant le 15 août 2026",
     maxGuests: 4,
+    fields: {
+      name: { label: "Nom complet", placeholder: "Votre nom" },
+      email: { label: "E-mail", placeholder: "vous@exemple.com" },
+      attending: { label: "Serez-vous présent(e) ?" },
+      guests: { label: "Nombre d'invités" },
+      dietary: {
+        label: "Régime alimentaire (facultatif)",
+        placeholder: "Allergies, préférences…",
+      },
+      message: {
+        label: "Un mot pour nous (facultatif)",
+        placeholder: "Partagez un vœu, une chanson, un mot…",
+      },
+    },
+    attendChoices: {
+      yes: "Avec joie, j'y serai",
+      no: "À regret, je ne pourrai pas",
+    },
+    submit: {
+      idle: "Envoyer ma réponse",
+      submitting: "Envoi…",
+    },
+    errors: {
+      name: "Merci d'indiquer votre nom.",
+      emailRequired: "Nous avons besoin d'un e-mail pour vous joindre.",
+      emailInvalid: "Cet e-mail ne semble pas valide.",
+      attending: "Dites-nous si vous pourrez venir.",
+      guests: "Choisissez entre 1 et {max} invités.",
+      submit: "Une erreur s'est produite. Merci de réessayer.",
+    },
+    success: {
+      heading: "Merci, {name}.",
+      yes: "C'est noté — nous avons hâte de célébrer ce jour avec vous.",
+      no: "Vous allez nous manquer, mais merci de nous avoir prévenus.",
+    },
   },
 
   footer: {
-    message: "With love and light, we can't wait to see you there.",
-    credit: "Made with care for our favourite people.",
+    message: "Avec tout notre amour, nous avons hâte de vous y retrouver.",
+    credit: "Créé avec soin pour les personnes qui nous sont chères.",
   },
 };
 
-/** Builds a Google Maps directions URL from a venue's map query. */
+/** Construit une URL d'itinéraire Google Maps à partir de la requête d'un lieu. */
 export function directionsUrl(venue: Venue): string {
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
     venue.mapQuery,

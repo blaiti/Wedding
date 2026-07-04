@@ -73,26 +73,26 @@ export function Countdown() {
     time.minutes === 0 &&
     time.seconds === 0;
 
+  const { eyebrow, title, labels, subtext, todayMessage } = wedding.countdown;
+
   return (
-    <Section id="countdown" eyebrow="Counting down" title="The Moment Approaches">
+    <Section id="countdown" eyebrow={eyebrow} title={title}>
       {isHere ? (
         <p className="text-center font-display text-2xl tracking-wide text-champagne">
-          Today is the day.
+          {todayMessage}
         </p>
       ) : (
         <div className="flex items-start justify-center gap-3 sm:gap-6">
-          <Unit value={time?.days ?? 0} label="Days" />
+          <Unit value={time?.days ?? 0} label={labels.days} />
           <Separator />
-          <Unit value={time?.hours ?? 0} label="Hours" />
+          <Unit value={time?.hours ?? 0} label={labels.hours} />
           <Separator />
-          <Unit value={time?.minutes ?? 0} label="Minutes" />
+          <Unit value={time?.minutes ?? 0} label={labels.minutes} />
           <Separator />
-          <Unit value={time?.seconds ?? 0} label="Seconds" />
+          <Unit value={time?.seconds ?? 0} label={labels.seconds} />
         </div>
       )}
-      <p className="mt-12 text-center text-sm text-mist-dim">
-        until we say &ldquo;I do&rdquo; in {wedding.location}
-      </p>
+      <p className="mt-12 text-center text-sm text-mist-dim">{subtext}</p>
     </Section>
   );
 }

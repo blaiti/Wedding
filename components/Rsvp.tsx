@@ -45,6 +45,7 @@ const initial: RsvpData = {
 };
 
 export function Rsvp() {
+  const { rsvp } = wedding;
   const [data, setData] = useState<RsvpData>(initial);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -58,12 +59,12 @@ export function Rsvp() {
 
   function validate(): boolean {
     const next: Errors = {};
-    if (!data.name.trim()) next.name = "Please tell us your name.";
-    if (!data.email.trim()) next.email = "We need an email to reach you.";
-    else if (!EMAIL_RE.test(data.email)) next.email = "That email doesn't look right.";
-    if (!data.attending) next.attending = "Let us know if you can make it.";
-    if (attendingYes && (data.guests < 1 || data.guests > wedding.rsvp.maxGuests)) {
-      next.guests = `Choose between 1 and ${wedding.rsvp.maxGuests} guests.`;
+    if (!data.name.trim()) next.name = rsvp.errors.name;
+    if (!data.email.trim()) next.email = rsvp.errors.emailRequired;
+    else if (!EMAIL_RE.test(data.email)) next.email = rsvp.errors.emailInvalid;
+    if (!data.attending) next.attending = rsvp.errors.attending;
+    if (attendingYes && (data.guests < 1 || data.guests > rsvp.maxGuests)) {
+      next.guests = rsvp.errors.guests.replace("{max}", String(rsvp.maxGuests));
     }
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -82,11 +83,11 @@ export function Rsvp() {
   }
 
   return (
-    <Section id="rsvp" eyebrow="Be There" title="Will You Join Us?">
+    <Section id="rsvp" eyebrow={rsvp.eyebrow} title={rsvp.title}>
       <div className="mx-auto max-w-xl">
         <Reveal>
           <p className="mb-10 text-center text-sm text-mist-dim">
-            {wedding.rsvp.deadline}
+            {rsvp.deadline}
           </p>
         </Reveal>
 
@@ -102,12 +103,10 @@ export function Rsvp() {
                 <CheckIcon />
               </div>
               <h3 className="font-display text-2xl font-light text-ink">
-                Thank you, {data.name.split(" ")[0]}.
+                {rsvp.success.heading.replace("{name}", data.name.split(" ")[0])}
               </h3>
               <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-mist">
-                {attendingYes
-                  ? "Your RSVP is in — we can't wait to celebrate with you."
-                  : "We'll miss you, but thank you for letting us know."}
+                {attendingYes ? rsvp.success.yes : rsvp.success.no}
               </p>
             </motion.div>
           ) : (
@@ -119,42 +118,42 @@ export function Rsvp() {
               animate={{ opacity: 1, y: 0 }}
               className="glass space-y-6 rounded-3xl p-6 sm:p-9"
             >
-              <Field label="Full name" error={errors.name}>
+              <Field label={rsvp.fields.name.label} error={errors.name}>
                 <input
                   type="text"
                   value={data.name}
                   onChange={(e) => set("name", e.target.value)}
-                  placeholder="Your name"
+                  placeholder={rsvp.fields.name.placeholder}
                   className={inputCls(!!errors.name)}
                   autoComplete="name"
                 />
               </Field>
 
-              <Field label="Email" error={errors.email}>
+              <Field label={rsvp.fields.email.label} error={errors.email}>
                 <input
                   type="email"
                   value={data.email}
                   onChange={(e) => set("email", e.target.value)}
-                  placeholder="you@example.com"
+                  placeholder={rsvp.fields.email.placeholder}
                   className={inputCls(!!errors.email)}
                   autoComplete="email"
                 />
               </Field>
 
-              <Field label="Will you attend?" error={errors.attending}>
+              <Field label={rsvp.fields.attending.label} error={errors.attending}>
                 <div className="grid grid-cols-2 gap-3">
                   {(["yes", "no"] as const).map((opt) => (
                     <button
                       key={opt}
                       type="button"
                       onClick={() => set("attending", opt)}
-                      className={`rounded-xl border px-4 py-3 font-display text-sm uppercase tracking-[0.15em] transition-colors ${
+                      className={`rounded-xl border px-4 py-3 font-display text-sm tracking-[0.02em] transition-colors ${
                         data.attending === opt
                           ? "border-champagne/70 bg-champagne/10 text-champagne"
                           : "border-line text-mist hover:border-champagne/40"
                       }`}
                     >
-                      {opt === "yes" ? "Joyfully accept" : "Regretfully decline"}
+                      {opt === "yes" ? rsvp.attendChoices.yes : rsvp.attendChoices.no}
                     </button>
                   ))}
                 </div>
@@ -170,23 +169,23 @@ export function Rsvp() {
                     transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                     className="space-y-6 overflow-hidden"
                   >
-                    <Field label="Number of guests (incl. you)" error={errors.guests}>
+                    <Field label={rsvp.fields.guests.label} error={errors.guests}>
                       <input
                         type="number"
                         min={1}
-                        max={wedding.rsvp.maxGuests}
+                        max={rsvp.maxGuests}
                         value={data.guests}
                         onChange={(e) => set("guests", Number(e.target.value))}
                         className={inputCls(!!errors.guests)}
                       />
                     </Field>
 
-                    <Field label="Dietary notes (optional)">
+                    <Field label={rsvp.fields.dietary.label}>
                       <input
                         type="text"
                         value={data.dietary}
                         onChange={(e) => set("dietary", e.target.value)}
-                        placeholder="Allergies, preferences…"
+                        placeholder={rsvp.fields.dietary.placeholder}
                         className={inputCls(false)}
                       />
                     </Field>
@@ -194,25 +193,25 @@ export function Rsvp() {
                 )}
               </AnimatePresence>
 
-              <Field label="A note for us (optional)">
+              <Field label={rsvp.fields.message.label}>
                 <textarea
                   value={data.message}
                   onChange={(e) => set("message", e.target.value)}
                   rows={3}
-                  placeholder="Share a wish, a song request, anything…"
+                  placeholder={rsvp.fields.message.placeholder}
                   className={`${inputCls(false)} resize-none`}
                 />
               </Field>
 
               {status === "error" && (
                 <p className="text-center text-sm text-red-400">
-                  Something went wrong. Please try again.
+                  {rsvp.errors.submit}
                 </p>
               )}
 
               <div className="flex justify-center pt-2">
                 <MagneticButton type="submit" variant="solid">
-                  {status === "submitting" ? "Sending…" : "Send RSVP"}
+                  {status === "submitting" ? rsvp.submit.submitting : rsvp.submit.idle}
                 </MagneticButton>
               </div>
             </motion.form>
