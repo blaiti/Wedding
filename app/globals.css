@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
+/* ───────────────────────────────────────────────────────────────────────
+   DESIGN TOKENS
+   In Tailwind CSS v4 the theme *is* the config. Everything declared inside
+   @theme becomes a first-class utility (e.g. bg-base, text-champagne,
+   font-display, tracking-wider). Edit tokens here to reskin the whole site.
+   ─────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Palette — Nocturne / Champagne */
+  --color-void: #050609;
+  --color-base: #0a0d14;
+  --color-surface: #121620;
+  --color-line: #232a37;
+
+  --color-champagne: #e6d2a8;
+  --color-champagne-hi: #f3e7c4;
+  --color-champagne-dim: #b7a67f;
+
+  --color-ink: #eceef4;
+  --color-mist: #afb8c9;
+  --color-mist-dim: #6b7488;
+
+  /* Fonts — wired to next/font CSS variables set in layout.tsx */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+
+  /* Motion */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Keyframes exposed as animate-* utilities */
+  --animate-aurora: aurora 22s ease-in-out infinite alternate;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-pulse-glow: pulseGlow 4s ease-in-out infinite;
+}
+
+@keyframes aurora {
+  0%   { transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1.05); }
+  50%  { transform: translate3d(4%, 3%, 0) rotate(8deg) scale(1.15); }
+  100% { transform: translate3d(-2%, 5%, 0) rotate(-6deg) scale(1.08); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────
+   BASE
+   ─────────────────────────────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-void);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Respect users who prefer reduced motion — kill non-essential animation. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Champagne selection */
+::selection {
+  background: color-mix(in oklab, var(--color-champagne) 30%, transparent);
+  color: var(--color-champagne-hi);
+}
+
+/* Slim, on-brand scrollbar (WebKit) */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-void); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-champagne-dim); }
+
+/* ───────────────────────────────────────────────────────────────────────
+   REUSABLE UTILITIES
+   ─────────────────────────────────────────────────────────────────────── */
+
+/* Sparingly-used glass card */
+.glass {
+  background: color-mix(in oklab, var(--color-surface) 70%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  border: 1px solid color-mix(in oklab, var(--color-champagne) 12%, var(--color-line));
+  box-shadow:
+    0 1px 0 0 color-mix(in oklab, var(--color-champagne) 10%, transparent) inset,
+    0 24px 60px -24px rgba(0, 0, 0, 0.7);
+}
+
+/* Champagne text gradient for accent headings */
+.text-gradient-champagne {
+  background: linear-gradient(
+    180deg,
+    var(--color-champagne-hi) 0%,
+    var(--color-champagne) 55%,
+    var(--color-champagne-dim) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Soft luminous halo behind an element */
+.glow-champagne {
+  box-shadow: 0 0 40px -8px color-mix(in oklab, var(--color-champagne) 45%, transparent);
+}
+
+/* Full-bleed film grain overlay (paired with a data-URI noise texture) */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hairline that fades out at both ends — used as section dividers */
+.rule-fade {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-champagne) 40%, transparent),
+    transparent
+  );
 }
