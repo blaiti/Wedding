@@ -1,19 +1,19 @@
 "use client";
 
-import Image from "next/image";
 import { wedding } from "@/lib/wedding-config";
 import { Section } from "./ui/Section";
 import { Reveal } from "./ui/Reveal";
+import { Photo } from "./ui/Photo";
 
 /**
  * OurStory — a vertical timeline. A luminous spine runs down the centre (desktop)
  * or left edge (mobile); chapters alternate sides and reveal on scroll.
  */
 export function OurStory() {
-  const { intro, chapters } = wedding.story;
+  const { eyebrow, title, intro, chapters } = wedding.story;
 
   return (
-    <Section id="story" eyebrow="Our Story" title="How We Got Here">
+    <Section id="story" eyebrow={eyebrow} title={title}>
       <Reveal>
         <p className="mx-auto mb-16 max-w-2xl text-balance text-center text-base leading-relaxed text-mist sm:mb-24">
           {intro}
@@ -54,13 +54,13 @@ export function OurStory() {
                     </p>
                   </Reveal>
 
-                  {/* Image (optional) */}
-                  {c.image ? (
+                  {/* Photo (optional) */}
+                  {c.photo ? (
                     <Reveal delay={0.1} className="[direction:ltr]">
                       <div className="glass group relative aspect-[4/3] overflow-hidden rounded-2xl">
-                        <Image
-                          src={c.image}
-                          alt={c.imageAlt ?? c.title}
+                        <Photo
+                          src={c.photo.src}
+                          alt={c.photo.alt}
                           fill
                           sizes="(max-width: 768px) 90vw, 45vw"
                           className="object-cover opacity-90 transition-transform duration-700 ease-out group-hover:scale-105"

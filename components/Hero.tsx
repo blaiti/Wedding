@@ -4,6 +4,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { useRef } from "react";
 import { wedding } from "@/lib/wedding-config";
 import { AuroraBackground } from "./ui/AuroraBackground";
+import { Photo } from "./ui/Photo";
 
 /**
  * Hero — full-viewport opening. Couple names, date, tagline over the ambient
@@ -23,6 +24,7 @@ export function Hero() {
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   const { one, two, joiner } = wedding.couple;
+  const { hero } = wedding;
 
   const container = {
     hidden: {},
@@ -43,6 +45,21 @@ export function Hero() {
       className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
     >
       <motion.div style={{ y: bgY }} className="absolute inset-0">
+        {/* Real wedding photo as the base layer… */}
+        <Photo
+          src={hero.photo.src}
+          alt={hero.photo.alt}
+          fill
+          preload
+          sizes="100vw"
+          className="object-cover"
+        />
+        {/* …a scrim so the headline stays legible over any photo… */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-b from-void/70 via-void/55 to-void"
+        />
+        {/* …and the ambient aurora glow on top. */}
         <AuroraBackground />
       </motion.div>
 
@@ -57,7 +74,7 @@ export function Hero() {
           variants={item}
           className="mb-8 font-display text-xs uppercase tracking-[0.5em] text-champagne-dim"
         >
-          We&rsquo;re getting married
+          {hero.surtitle}
         </motion.p>
 
         <motion.h1
@@ -95,17 +112,30 @@ export function Hero() {
         >
           {wedding.tagline}
         </motion.p>
+
+        {/* Mobile-only affordance: "opens" the invitation by scrolling in. */}
+        <motion.div variants={item} className="mt-10 sm:hidden">
+          <a
+            href="#countdown"
+            className="inline-flex items-center justify-center rounded-full border border-champagne/40 px-7 py-3.5 font-display text-sm uppercase tracking-[0.14em] text-champagne transition-colors hover:border-champagne/70 hover:text-champagne-hi"
+          >
+            {hero.openLabel}
+          </a>
+        </motion.div>
       </motion.div>
 
       {/* Scroll cue */}
       <motion.a
         href="#countdown"
-        aria-label="Scroll to countdown"
-        className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2"
+        aria-label={hero.scrollAriaLabel}
+        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-3"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 1 }}
       >
+        <span className="font-display text-[0.6rem] uppercase tracking-[0.35em] text-champagne-dim">
+          {hero.scrollHint}
+        </span>
         <span className="flex h-11 w-6 items-start justify-center rounded-full border border-champagne/30 p-1.5">
           <motion.span
             className="h-2 w-1 rounded-full bg-champagne"
