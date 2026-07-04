@@ -82,10 +82,14 @@ export function Rsvp() {
   }
 
   return (
-    <Section id="rsvp" eyebrow="Be There" title="Will You Join Us?">
+    <Section
+      id="rsvp"
+      eyebrow={wedding.sections.rsvp.eyebrow}
+      title={wedding.sections.rsvp.title}
+    >
       <div className="mx-auto max-w-xl">
         <Reveal>
-          <p className="mb-10 text-center text-sm text-mist-dim">
+          <p className="mb-10 text-center text-sm text-muted">
             {wedding.rsvp.deadline}
           </p>
         </Reveal>
@@ -98,13 +102,16 @@ export function Rsvp() {
               animate={{ opacity: 1, y: 0 }}
               className="glass rounded-3xl p-10 text-center"
             >
-              <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-champagne/40 text-champagne glow-champagne">
-                <CheckIcon />
+              <div className="glow-iris relative mx-auto mb-5 flex h-14 w-14 items-center justify-center overflow-hidden rounded-full text-ink">
+                <span className="iridescent absolute inset-0 rounded-full opacity-60" />
+                <span className="relative">
+                  <CheckIcon />
+                </span>
               </div>
               <h3 className="font-display text-2xl font-light text-ink">
                 Thank you, {data.name.split(" ")[0]}.
               </h3>
-              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-mist">
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-taupe">
                 {attendingYes
                   ? "Your RSVP is in — we can't wait to celebrate with you."
                   : "We'll miss you, but thank you for letting us know."}
@@ -148,10 +155,10 @@ export function Rsvp() {
                       key={opt}
                       type="button"
                       onClick={() => set("attending", opt)}
-                      className={`rounded-xl border px-4 py-3 font-display text-sm uppercase tracking-[0.15em] transition-colors ${
+                      className={`rounded-xl border px-4 py-3 font-sans text-xs uppercase tracking-[0.15em] transition-colors ${
                         data.attending === opt
-                          ? "border-champagne/70 bg-champagne/10 text-champagne"
-                          : "border-line text-mist hover:border-champagne/40"
+                          ? "border-accent/70 bg-accent/10 text-accent-deep"
+                          : "border-line text-taupe hover:border-accent/40"
                       }`}
                     >
                       {opt === "yes" ? "Joyfully accept" : "Regretfully decline"}
@@ -205,7 +212,7 @@ export function Rsvp() {
               </Field>
 
               {status === "error" && (
-                <p className="text-center text-sm text-red-400">
+                <p className="text-center text-sm text-red-500">
                   Something went wrong. Please try again.
                 </p>
               )}
@@ -236,18 +243,18 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="mb-2 block font-display text-xs uppercase tracking-[0.2em] text-mist-dim">
+      <span className="mb-2 block font-sans text-xs uppercase tracking-[0.2em] text-muted">
         {label}
       </span>
       {children}
-      {error && <span className="mt-1.5 block text-xs text-red-400">{error}</span>}
+      {error && <span className="mt-1.5 block text-xs text-red-500">{error}</span>}
     </label>
   );
 }
 
 function inputCls(hasError: boolean) {
-  return `w-full rounded-xl border bg-void/40 px-4 py-3 text-sm text-ink placeholder:text-mist-dim/70 outline-none transition-colors focus:border-champagne/60 ${
-    hasError ? "border-red-400/60" : "border-line"
+  return `w-full rounded-xl border bg-cream/60 px-4 py-3 text-sm text-ink placeholder:text-muted outline-none transition-colors focus:border-accent/60 focus:bg-paper ${
+    hasError ? "border-red-400" : "border-line"
   }`;
 }
 

@@ -1,72 +1,73 @@
-// One-off generator for on-brand placeholder images.
+// One-off generator for warm, clearly-labeled PHOTO placeholders.
 // Run with: node scripts/gen-placeholders.mjs
-// Produces gradient + starfield SVGs so the layout looks real before you
-// drop in the actual photos. Safe to delete once real images are in place.
-import { writeFileSync, mkdirSync } from "node:fs";
+// These stand in for real photos so the layout looks right before you drop
+// your images in. Each is obviously a placeholder ("YOUR PHOTO" + filename).
+// Safe to delete this script and the /public/photos SVGs once real photos are in.
+import { writeFileSync, mkdirSync, rmSync } from "node:fs";
 
-mkdirSync("public/images", { recursive: true });
+rmSync("public/images", { recursive: true, force: true }); // remove old monogram set
+mkdirSync("public/photos", { recursive: true });
 
+// Warm pastel pairs on ivory (lilac / peach / mint / sand blooms).
 const palettes = [
-  ["#0b1220", "#1b2233", "#e6d2a8"],
-  ["#0a0d14", "#241d16", "#f3e7c4"],
-  ["#0c1016", "#14202a", "#afb8c9"],
-  ["#100b14", "#241a2b", "#e6d2a8"],
-  ["#0a1013", "#122320", "#cfe0d6"],
-  ["#0d0c12", "#1e1b2a", "#f3e7c4"],
+  ["#f7f4ef", "#efe3f3", "#dcc9f2"], // lilac
+  ["#f7f4ef", "#f6e6dc", "#f8d8c4"], // peach
+  ["#f7f4ef", "#e2f0e8", "#c8ecd8"], // mint
+  ["#f7f4ef", "#efe9df", "#e4d8c6"], // sand
 ];
 
-function stars(w, h, n, color) {
-  let s = "";
-  for (let i = 0; i < n; i++) {
-    const x = ((i * 97.13) % w).toFixed(1);
-    const y = ((i * 57.31) % h).toFixed(1);
-    const r = (((i % 3) + 1) * 0.6).toFixed(1);
-    const o = (0.15 + ((i % 5) / 5) * 0.5).toFixed(2);
-    s += `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}" opacity="${o}"/>`;
-  }
-  return s;
+// A small "photo" glyph (mountains + sun) drawn in soft accent.
+function glyph(cx, cy, s, color) {
+  return `<g transform="translate(${cx - s / 2}, ${cy - s / 2})" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" opacity="0.55">
+    <rect x="0" y="0" width="${s}" height="${s}" rx="${s * 0.12}"/>
+    <circle cx="${s * 0.32}" cy="${s * 0.34}" r="${s * 0.08}"/>
+    <path d="M ${s * 0.1} ${s * 0.8} L ${s * 0.4} ${s * 0.48} L ${s * 0.62} ${s * 0.68} L ${s * 0.78} ${s * 0.52} L ${s * 0.9} ${s * 0.66} L ${s * 0.9} ${s * 0.9} L ${s * 0.1} ${s * 0.9} Z"/>
+  </g>`;
 }
 
-function svg(w, h, [c0, c1, accent], label) {
+function svg(w, h, [c0, c1, accent], filename) {
+  const g = Math.min(w, h) * 0.16;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="${c0}"/>
-      <stop offset="1" stop-color="${c1}"/>
+      <stop offset="0.55" stop-color="${c1}"/>
+      <stop offset="1" stop-color="${accent}"/>
     </linearGradient>
-    <radialGradient id="glow" cx="50%" cy="30%" r="70%">
-      <stop offset="0" stop-color="${accent}" stop-opacity="0.28"/>
-      <stop offset="0.6" stop-color="${accent}" stop-opacity="0"/>
+    <radialGradient id="bloom" cx="70%" cy="22%" r="70%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.5"/>
+      <stop offset="0.6" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect width="${w}" height="${h}" fill="url(#g)"/>
-  <rect width="${w}" height="${h}" fill="url(#glow)"/>
-  ${stars(w, h, 60, accent)}
-  <g fill="none" stroke="${accent}" stroke-opacity="0.35" stroke-width="1">
-    <circle cx="${w / 2}" cy="${h / 2}" r="${Math.min(w, h) * 0.16}"/>
-  </g>
-  <text x="50%" y="50%" dy="0.35em" text-anchor="middle"
-    font-family="'Space Grotesk', system-ui, sans-serif" font-size="${Math.min(w, h) * 0.09}"
-    letter-spacing="4" fill="${accent}" fill-opacity="0.8">A &amp; K</text>
+  <rect width="${w}" height="${h}" fill="url(#bg)"/>
+  <rect width="${w}" height="${h}" fill="url(#bloom)"/>
+  <rect x="10" y="10" width="${w - 20}" height="${h - 20}" rx="14" fill="none" stroke="#ffffff" stroke-opacity="0.6"/>
+  ${glyph(w / 2, h / 2 - 14, g, "#8a7a6c")}
+  <text x="50%" y="${h / 2 + g * 0.55}" text-anchor="middle"
+    font-family="system-ui, sans-serif" font-size="13" letter-spacing="4"
+    fill="#8a7a6c" fill-opacity="0.85">YOUR PHOTO</text>
   <text x="50%" y="${h - 18}" text-anchor="middle"
-    font-family="system-ui, sans-serif" font-size="12" letter-spacing="3"
-    fill="${accent}" fill-opacity="0.45">${label}</text>
+    font-family="ui-monospace, monospace" font-size="11" letter-spacing="1"
+    fill="#8a7a6c" fill-opacity="0.5">${filename}</text>
 </svg>`;
 }
 
 const jobs = [
-  ["story-1", 1000, 750, 0],
-  ["story-2", 1000, 750, 1],
-  ["gallery-1", 800, 1000, 2],
-  ["gallery-2", 800, 800, 3],
-  ["gallery-3", 800, 800, 4],
-  ["gallery-4", 1200, 750, 5],
-  ["gallery-5", 800, 800, 0],
-  ["gallery-6", 800, 1000, 1],
+  // story milestones (landscape 4:3)
+  ["story-01", 1000, 750, 0],
+  ["story-02", 1000, 750, 1],
+  ["story-03", 1000, 750, 2],
+  // gallery (mixed aspects to match the masonry spans)
+  ["gallery-01", 800, 1000, 1],
+  ["gallery-02", 800, 800, 2],
+  ["gallery-03", 800, 800, 0],
+  ["gallery-04", 1200, 750, 3],
+  ["gallery-05", 800, 800, 1],
+  ["gallery-06", 800, 1000, 2],
 ];
 
 for (const [name, w, h, p] of jobs) {
-  writeFileSync(`public/images/${name}.svg`, svg(w, h, palettes[p], "PLACEHOLDER"));
+  writeFileSync(`public/photos/${name}.svg`, svg(w, h, palettes[p], `${name}.jpg`));
 }
 
-console.log(`Generated ${jobs.length} placeholder images in public/images/`);
+console.log(`Generated ${jobs.length} photo placeholders in public/photos/`);

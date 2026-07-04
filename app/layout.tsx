@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { wedding } from "@/lib/wedding-config";
+import { MeshBackground } from "@/components/ui/MeshBackground";
 
-// Display face — geometric, lightly futuristic. Used for all headings.
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+// Display face — Fraunces, a warm high-contrast modern serif. All headings.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
 });
 
-// Body face — clean neutral sans.
+// Body face — Inter, clean neutral sans. Body copy + tracked eyebrows.
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -21,7 +22,7 @@ const title = `${wedding.couple.one} ${wedding.couple.joiner} ${wedding.couple.t
 
 export const metadata: Metadata = {
   title,
-  description: `${wedding.tagline} Join us in ${wedding.location} on ${wedding.dateDisplay}.`,
+  description: `${wedding.hero.tagline} Join us in ${wedding.location} on ${wedding.dateDisplay}.`,
   openGraph: {
     title,
     description: `Join us in ${wedding.location} on ${wedding.dateDisplay}.`,
@@ -30,8 +31,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050609",
-  colorScheme: "dark",
+  themeColor: "#f7f4ef",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
@@ -42,10 +43,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
-      {/* .grain paints a fixed, blend-mode film-grain overlay over everything */}
-      <body className="grain min-h-full bg-void text-ink">{children}</body>
+      {/* .grain paints a fixed, blended film-grain overlay over everything */}
+      <body className="grain min-h-full bg-ivory text-ink">
+        <MeshBackground />
+        {children}
+      </body>
     </html>
   );
 }

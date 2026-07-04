@@ -4,6 +4,7 @@ import { Reveal } from "./Reveal";
 /**
  * Section — consistent vertical rhythm, max-width and an optional
  * eyebrow + heading treatment shared across the page.
+ * Eyebrows are tracked sans (Inter); titles are the display serif (Fraunces).
  */
 export function Section({
   id,
@@ -29,14 +30,14 @@ export function Section({
         <header className="mb-14 text-center sm:mb-20">
           {eyebrow && (
             <Reveal>
-              <p className="mb-4 font-display text-xs uppercase tracking-[0.42em] text-champagne-dim">
+              <p className="mb-4 font-sans text-xs uppercase tracking-[0.4em] text-accent">
                 {eyebrow}
               </p>
             </Reveal>
           )}
           {title && (
             <Reveal delay={0.06}>
-              <h2 className="font-display text-3xl font-light tracking-tight text-ink sm:text-4xl md:text-5xl">
+              <h2 className="font-display text-4xl font-light tracking-tight text-ink sm:text-5xl md:text-[3.25rem]">
                 {title}
               </h2>
             </Reveal>

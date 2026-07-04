@@ -10,7 +10,8 @@ import type { ReactNode, MouseEvent } from "react";
 
 /**
  * MagneticButton — a link/button that gently pulls toward the cursor on hover.
- * Falls back to a static button when the user prefers reduced motion.
+ * Solid variant is warm charcoal ink with an iridescent foil sheen on hover;
+ * ghost variant is an accent outline. Falls back to static under reduced motion.
  */
 export function MagneticButton({
   children,
@@ -52,21 +53,30 @@ export function MagneticButton({
   }
 
   const base =
-    "group relative inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 font-display text-sm tracking-[0.14em] uppercase transition-colors duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-champagne/60 focus-visible:ring-offset-2 focus-visible:ring-offset-void";
+    "group relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 font-sans text-xs tracking-[0.16em] uppercase transition-colors duration-300 will-change-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ivory";
 
   const styles =
     variant === "solid"
-      ? "bg-champagne text-void hover:bg-champagne-hi glow-champagne"
-      : "border border-champagne/30 text-champagne hover:border-champagne/70 hover:text-champagne-hi";
+      ? "bg-ink text-ivory hover:bg-ink/90"
+      : "border border-accent/40 text-accent hover:border-accent/80 hover:text-accent-deep";
 
   const content = (
     <motion.span
       style={{ x: springX, y: springY }}
-      className="inline-flex items-center gap-2"
+      className="relative z-10 inline-flex items-center gap-2"
     >
       {children}
     </motion.span>
   );
+
+  // Iridescent foil sheen that sweeps across the solid button on hover.
+  const sheen =
+    variant === "solid" ? (
+      <span
+        aria-hidden
+        className="iridescent pointer-events-none absolute inset-0 -translate-x-full opacity-0 transition-all duration-700 ease-out group-hover:translate-x-0 group-hover:opacity-30"
+      />
+    ) : null;
 
   const shared = {
     className: `${base} ${styles} ${className}`,
@@ -77,6 +87,7 @@ export function MagneticButton({
   if (href) {
     return (
       <a href={href} target={target} rel={rel} {...shared}>
+        {sheen}
         {content}
       </a>
     );
@@ -84,6 +95,7 @@ export function MagneticButton({
 
   return (
     <button type={type ?? "button"} onClick={onClick} {...shared}>
+      {sheen}
       {content}
     </button>
   );

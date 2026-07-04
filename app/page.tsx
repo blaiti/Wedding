@@ -1,4 +1,4 @@
-import { Hero } from "@/components/Hero";
+import { EnvelopeHero } from "@/components/EnvelopeHero";
 import { Countdown } from "@/components/Countdown";
 import { OurStory } from "@/components/OurStory";
 import { EventDetails } from "@/components/EventDetails";
@@ -7,13 +7,14 @@ import { Rsvp } from "@/components/Rsvp";
 import { Footer } from "@/components/Footer";
 
 /**
- * Single-page scroll experience. Sections are stacked vertically in order;
- * each one manages its own scroll-into-view animation.
+ * Single-page scroll experience. The envelope hero opens as you scroll the
+ * first screen, then the stacked sections follow, each with its own
+ * scroll-into-view animation.
  */
 export default function Home() {
   return (
     <main className="relative">
-      <Hero />
+      <EnvelopeHero />
       <Countdown />
       <OurStory />
       <EventDetails />

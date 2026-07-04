@@ -36,13 +36,13 @@ function Unit({ value, label }: { value: number; label: string }) {
             animate={{ y: "0%", opacity: 1 }}
             exit={{ y: "70%", opacity: 0 }}
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute font-display text-3xl font-light tabular-nums text-gradient-champagne sm:text-5xl"
+            className="text-iridescent animate-sheen absolute font-display text-3xl font-normal tabular-nums sm:text-5xl"
           >
             {display}
           </motion.span>
         </AnimatePresence>
       </div>
-      <span className="mt-3 font-display text-[0.65rem] uppercase tracking-[0.3em] text-mist-dim sm:text-xs">
+      <span className="mt-3 font-sans text-[0.65rem] uppercase tracking-[0.3em] text-muted sm:text-xs">
         {label}
       </span>
     </div>
@@ -74,9 +74,13 @@ export function Countdown() {
     time.seconds === 0;
 
   return (
-    <Section id="countdown" eyebrow="Counting down" title="The Moment Approaches">
+    <Section
+      id="countdown"
+      eyebrow={wedding.sections.countdown.eyebrow}
+      title={wedding.sections.countdown.title}
+    >
       {isHere ? (
-        <p className="text-center font-display text-2xl tracking-wide text-champagne">
+        <p className="text-center font-display text-2xl italic tracking-wide text-accent">
           Today is the day.
         </p>
       ) : (
@@ -90,7 +94,7 @@ export function Countdown() {
           <Unit value={time?.seconds ?? 0} label="Seconds" />
         </div>
       )}
-      <p className="mt-12 text-center text-sm text-mist-dim">
+      <p className="mt-12 text-center text-sm text-muted">
         until we say &ldquo;I do&rdquo; in {wedding.location}
       </p>
     </Section>
@@ -99,7 +103,7 @@ export function Countdown() {
 
 function Separator() {
   return (
-    <span className="mt-6 font-display text-2xl text-champagne-dim/40 sm:mt-9 sm:text-4xl">
+    <span className="mt-6 font-display text-2xl text-accent/40 sm:mt-9 sm:text-4xl">
       :
     </span>
   );

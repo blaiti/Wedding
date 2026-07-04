@@ -18,7 +18,7 @@ function EventCard({
   return (
     <Reveal delay={delay} className="h-full">
       <article className="glass flex h-full flex-col items-center rounded-3xl p-8 text-center sm:p-10">
-        <span className="font-display text-xs uppercase tracking-[0.4em] text-champagne-dim">
+        <span className="font-sans text-xs uppercase tracking-[0.4em] text-accent">
           {kicker}
         </span>
 
@@ -28,15 +28,15 @@ function EventCard({
           <span className="rule-fade h-px w-8" />
         </div>
 
-        <p className="font-display text-lg tracking-[0.2em] text-champagne">
+        <p className="font-display text-xl tracking-[0.05em] text-ink">
           {venue.time}
         </p>
 
-        <h3 className="mt-4 font-display text-2xl font-light text-ink sm:text-3xl">
+        <h3 className="mt-3 font-display text-2xl font-light text-ink sm:text-3xl">
           {venue.name}
         </h3>
 
-        <p className="mt-3 max-w-xs text-sm leading-relaxed text-mist">
+        <p className="mt-3 max-w-xs text-sm leading-relaxed text-taupe">
           {venue.address}
         </p>
 
@@ -59,7 +59,11 @@ function EventCard({
 export function EventDetails() {
   const { ceremony, reception } = wedding.events;
   return (
-    <Section id="details" eyebrow="The Details" title="Where & When">
+    <Section
+      id="details"
+      eyebrow={wedding.sections.details.eyebrow}
+      title={wedding.sections.details.title}
+    >
       <div className="mx-auto grid max-w-4xl gap-6 sm:gap-8 md:grid-cols-2">
         <EventCard kicker="The Ceremony" venue={ceremony} delay={0} />
         <EventCard kicker="The Reception" venue={reception} delay={0.1} />
@@ -77,7 +81,7 @@ function ClockIcon() {
       fill="none"
       stroke="currentColor"
       strokeWidth="1.4"
-      className="text-champagne"
+      className="text-accent"
       aria-hidden
     >
       <circle cx="12" cy="12" r="9" />

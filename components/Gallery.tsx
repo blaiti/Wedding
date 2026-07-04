@@ -9,7 +9,8 @@ import { revealChild } from "./ui/Reveal";
 
 /**
  * Gallery — a CSS masonry-style grid (some tiles span extra rows/cols) with a
- * keyboard-navigable lightbox. Tiles reveal with a stagger on scroll.
+ * keyboard-navigable lightbox. Real photos via next/image; tiles reveal with a
+ * stagger on scroll.
  */
 export function Gallery() {
   const images = wedding.gallery;
@@ -49,7 +50,11 @@ export function Gallery() {
         : "aspect-square";
 
   return (
-    <Section id="gallery" eyebrow="Moments" title="A Few Favourites">
+    <Section
+      id="gallery"
+      eyebrow={wedding.sections.gallery.eyebrow}
+      title={wedding.sections.gallery.title}
+    >
       <motion.ul
         initial="hidden"
         whileInView="visible"
@@ -61,12 +66,12 @@ export function Gallery() {
           <motion.li
             key={img.src}
             variants={revealChild}
-            className={`group relative overflow-hidden rounded-2xl ${spanClass(img.span)}`}
+            className={`group relative overflow-hidden rounded-2xl border border-white/50 ${spanClass(img.span)}`}
           >
             <button
               type="button"
               onClick={() => setActive(i)}
-              className="absolute inset-0 h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-champagne/60"
+              className="absolute inset-0 h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60"
               aria-label={`Open image: ${img.alt}`}
             >
               <Image
@@ -76,8 +81,8 @@ export function Gallery() {
                 sizes="(max-width: 640px) 50vw, 33vw"
                 className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               />
-              <span className="absolute inset-0 bg-void/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <span className="absolute bottom-3 right-3 translate-y-1 text-champagne opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+              <span className="absolute inset-0 bg-ink/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <span className="absolute bottom-3 right-3 translate-y-1 text-white opacity-0 drop-shadow transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                 <ExpandIcon />
               </span>
             </button>
@@ -89,7 +94,7 @@ export function Gallery() {
       <AnimatePresence>
         {active !== null && (
           <motion.div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-void/90 p-4 backdrop-blur-md"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/40 p-4 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -102,7 +107,7 @@ export function Gallery() {
               type="button"
               onClick={close}
               aria-label="Close"
-              className="absolute right-5 top-5 rounded-full border border-line p-2 text-mist transition-colors hover:border-champagne/60 hover:text-champagne"
+              className="absolute right-5 top-5 rounded-full border border-white/60 bg-paper/70 p-2 text-ink transition-colors hover:border-accent/60 hover:text-accent"
             >
               <CloseIcon />
             </button>
@@ -130,7 +135,7 @@ export function Gallery() {
 
             <NavButton side="right" onClick={next} />
 
-            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 font-display text-xs tracking-[0.3em] text-mist-dim">
+            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 rounded-full bg-paper/70 px-3 py-1 font-sans text-xs tracking-[0.3em] text-taupe">
               {active + 1} / {images.length}
             </p>
           </motion.div>
@@ -149,7 +154,7 @@ function NavButton({ side, onClick }: { side: "left" | "right"; onClick: () => v
         onClick();
       }}
       aria-label={side === "left" ? "Previous image" : "Next image"}
-      className={`absolute top-1/2 -translate-y-1/2 rounded-full border border-line p-3 text-mist transition-colors hover:border-champagne/60 hover:text-champagne ${
+      className={`absolute top-1/2 -translate-y-1/2 rounded-full border border-white/60 bg-paper/70 p-3 text-ink transition-colors hover:border-accent/60 hover:text-accent ${
         side === "left" ? "left-3 sm:left-6" : "right-3 sm:right-6"
       }`}
     >
